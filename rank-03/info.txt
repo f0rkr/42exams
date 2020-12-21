@@ -1,3 +1,5 @@
+
+
 main function:
 	- readfile
 	|   - fileerrors
@@ -33,3 +35,4 @@ Error types:
 	If a point is defined as (Xa, Ya)
 	And a rectangle with a top left corner (Xtl, Ytl) and a bottom right corner (Xbr, Ybr)
 	If Xtl <= Xa <= Xbr and Ytl <= Ya <= Ybr then the point is in the rectangle
+
