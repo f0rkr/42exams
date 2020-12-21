@@ -1,0 +1,35 @@
+main function:
+	- readfile
+	|   - fileerrors
+	- parse data
+		- data errors
+	- print map
+
+function used:
+	ft_readfile: take filename as arguemnt
+		- readfile and exit if any errors encountred during opeing file
+		- passing pars type to right function
+	ft_display: take data line as arguemnt
+		- parse screen data 
+		- allocate and fill mapzone with background char
+		- exit if any errors in data format with status code 1
+	ft_reacRr: take data line as arguemnt
+		- parse rectangle data
+		- fill data to mapzone
+		- exit if any errors in data format with status code 1
+	ft_printmap: take Mapzone as arguemnt
+		- printing map to stdout
+		- return 0
+Data Types:
+		- Display : struct display
+file handling rules:
+	- The lines must be read in order and therefore operations must be executed in the same order	
+	- There must be one space between each variable in a line
+Error types:
+	- "Error: argument\n"
+	- "Error: Operation file corrupted\n"
+
+	Hint:
+	If a point is defined as (Xa, Ya)
+	And a rectangle with a top left corner (Xtl, Ytl) and a bottom right corner (Xbr, Ybr)
+	If Xtl <= Xa <= Xbr and Ytl <= Ya <= Ybr then the point is in the rectangle
