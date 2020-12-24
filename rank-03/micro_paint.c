@@ -39,17 +39,18 @@ void    ft_putstr(char *str)
 
 void	ft_draw(int xt, int yt, int xb, int yb)
 {
-	while (yt <= yb)
+	while (yt < g_r.yb)
 	{
 		xt = g_r.xt;
-		while (xt <= xb)
+		while (xt < g_r.xb)
 		{
-			if (g_r.op == 'r' && yt >= 0 && xt >= 0 && (((xt == g_r.xt || xt == g_r.xb)) || ((yt == g_r.yt || yt == g_r.yb))))
-				g_display.mapzone[yt][xt] = g_r.b_char;
-			else if (g_r.op == 'R' && yt >= 0 && xt >= 0)
+			
+			if (g_r.op == 'r' && yt >= 0 && xt >= 0 && (((xt == g_r.xt || xt == g_r.xb)) || ((yt == g_r.yt || yt == g_r.yb))) && (g_r.xb < g_display.width && g_r.yb < g_display.height))
 				g_display.mapzone[yt][xt] = g_r.b_char;
 			xt++;
 		}
+		// if (yt >= 0 && xt >= 0)
+		// 	memset(&g_display.mapzone[yt][xt], g_r.b_char, xb + 1);
 		yt++;
 	}
 }
@@ -80,20 +81,12 @@ int     ft_readfile(char const *filename)
 	{
 		g_r.xt = (int) (g_r.x);
 		g_r.yt = (int) (g_r.y);
-		g_r.xb = g_r.xt + (int) (g_r.width);
-		g_r.yb = g_r.yt + (int) (g_r.height);
+		g_r.xb = g_r.xt + (int) (g_r.width) + 1;
+		g_r.yb = g_r.yt + (int) (g_r.height) + 1;
 		if (((int) (g_r.x * 10) % 10) > 0)
 			g_r.xt++;
 		if (((int) (g_r.y * 10) % 10) > 0)
 			g_r.yt++;
-		if (g_r.xb >= g_display.width)
-			g_r.xb = g_display.width;
-		if (g_r.yb >= g_display.height)
-			g_r.yb = g_display.height;
-		if (g_r.xt < 0)
-			g_r.xt = 0;
-		if (g_r.yt < 0)
-			g_r.yt = 0;
 		ft_draw(g_r.xt, g_r.yt, g_r.xb, g_r.yb);
 	}
 	fclose(fd);
