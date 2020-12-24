@@ -13,12 +13,16 @@ typedef struct		s_display
 
 typedef struct		s_rect
 {
-	char	op;
-	float	x;
-	float	y;
-	int		width;
-	int		height;
-	char	b_char;
+	char		op;
+	float		x;
+	float		y;
+	float		width;
+	float		height;
+	char		b_char;
+	int			xt;
+	int			yt;
+	int			xb;
+	int			yb;
 }					t_rect;
 
 t_display	g_display;
@@ -33,90 +37,29 @@ void    ft_putstr(char *str)
 	}
 }
 
-float	ft_atoi(char *line)
+void	ft_draw(int xt, int yt, int xb, int yb)
 {
-	float i;
-
-	i = 0;
-	while (*line == ' ')
-		line++;
-	while (*line >= 49 && *line <= 57 )
+	while (yt <= yb)
 	{
-		i = i * 10 + (*line + 49);
-		line++;
+		xt = g_r.xt;
+		while (xt <= xb)
+		{
+			if (g_r.op == 'r' && yt >= 0 && xt >= 0 && (((xt == g_r.xt || xt == g_r.xb)) || ((yt == g_r.yt || yt == g_r.yb))))
+				g_display.mapzone[yt][xt] = g_r.b_char;
+			else if (g_r.op == 'R' && yt >= 0 && xt >= 0)
+				g_display.mapzone[yt][xt] = g_r.b_char;
+			xt++;
+		}
+		yt++;
 	}
-	return (i);
 }
 
-int		ft_check_space(char *line)
+int		ft_check_validity(int x, int y)
 {
-	int i;
-
-	i = 0;
-	while (line[i])
-	{
-		if (line[i] == ' ' && (line[i+1] == ' ' || line[i-1] == ' '))
+	if (x >= 0 && x <= g_display.width)
+		if (y >= 0 && y <= g_display.height)
 			return (1);
-		i++;
-	}
 	return (0);
-}
-
-int		ft_num_arg(char *line)
-{
-	int i;
-	int arg;
-
-	arg = 1;
-	i = 0;
-	while (line[i])
-	{
-		if (line[i] == ' ' && line[i+1] != ' ' && line[i-1] != ' ')
-			arg++;
-		i++;
-	}
-	return (arg);
-}
-
-int     ft_display(char *line)
-{
-	int i;
-
-	i = 0;
-	if (ft_num_arg(line) != 3)
-		return (1);
-	ft_putstr(line);
-	printf("%d : %d\n", g_display.width, g_display.height);
-	if (g_display.width > 300 || g_display.width <= 0)
-		return (1);
-	if (g_display.height > 300 || g_display.height <= 0)
-		return (1);
-	while (i < g_display.height)
-	{
-		memset(g_display.mapzone[i], g_display.b_char, g_display.width);
-		i++;
-	}
-	return 0;
-}
-
-int     ft_reacRr(char *line)
-{
-	if (ft_num_arg(line) != 6)
-		return (1);
-	return 0;
-}
-
-void	ft_draw()
-{
-	int i;
-
-	i = (int) g_r.y;
-	while (i <= g_r.y + g_r.height)
-	{
-		printf("%d | %d \n", i, (int)g_r.x);
-		memset(&g_display.mapzone[i][(int) (g_r.x)], g_r.b_char, g_r.width + 1);
-		i++;
-	}
 }
 int     ft_readfile(char const *filename)
 {
@@ -133,13 +76,25 @@ int     ft_readfile(char const *filename)
 		memset(g_display.mapzone[i], g_display.b_char, g_display.width);
 		i++;
 	}
-	while ((i = fscanf(fd, "%c %f %f %d %d %c\n", &g_r.op, &g_r.x, &g_r.y, &g_r.width, &g_r.height, &g_r.b_char)))
+	while (fscanf(fd, "%c %f %f %f %f %c\n", &g_r.op, &g_r.x, &g_r.y, &g_r.width, &g_r.height, &g_r.b_char) == 6)
 	{
-		if (i == EOF)
-			break;
-		if (i != 6)
-			return (1);
-		ft_draw();
+		g_r.xt = (int) (g_r.x);
+		g_r.yt = (int) (g_r.y);
+		g_r.xb = g_r.xt + (int) (g_r.width);
+		g_r.yb = g_r.yt + (int) (g_r.height);
+		if (((int) (g_r.x * 10) % 10) > 0)
+			g_r.xt++;
+		if (((int) (g_r.y * 10) % 10) > 0)
+			g_r.yt++;
+		if (g_r.xb >= g_display.width)
+			g_r.xb = g_display.width;
+		if (g_r.yb >= g_display.height)
+			g_r.yb = g_display.height;
+		if (g_r.xt < 0)
+			g_r.xt = 0;
+		if (g_r.yt < 0)
+			g_r.yt = 0;
+		ft_draw(g_r.xt, g_r.yt, g_r.xb, g_r.yb);
 	}
 	fclose(fd);
 	return (0);
