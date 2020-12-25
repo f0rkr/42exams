@@ -54,6 +54,26 @@ int		ft_check_empty(int x, int y, int xb, int yb)
 
 void	ft_draw(float xt, float yt, float xb, float yb)
 {
+	if (x >= 0 && x < g_display.width)
+		if (y >= 0 && y < g_display.height)
+			return (1);
+	return (0);
+}
+
+int		ft_check_empty(float x, float y, float xb, float yb)
+{
+	if ((x == g_r.xt || x == xb) || (y == g_r.yt || y == yb))
+		return (1);
+	return (0);
+}
+
+void	ft_draw(float xt, float yt, float xb, float yb)
+{
+	int i;
+	int j;
+
+	i = 0;
+	j = 0;
 	while (yt <= yb)
 	{
 		xt = g_r.x;
@@ -71,8 +91,10 @@ void	ft_draw(float xt, float yt, float xb, float yb)
 			
 			xt++;
 		}
+		i++;
 		yt++;
 	}
+	// printf("%c : %d %d\n", g_r.b_char, i, j);
 }
 
 int     ft_readfile(char const *filename)
