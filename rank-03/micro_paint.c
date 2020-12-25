@@ -38,22 +38,14 @@ void    ft_putstr(char *str)
 	}
 }
 
-int		ft_check_validity(float x, float y, float xb, float yb)
-{
-	if (x >= 0 && x < g_display.width)
-		if (y >= 0 && y < g_display.height)
-			return (1);
-	return (0);
-}
-
 int		ft_check_empty(float x, float y)
 {
 	if ((((x < g_r.xt) || (g_r.xb < x)) || (y < g_r.yt)) || (g_r.yb < y))
 		return (0);
 	if (((x - g_r.xt < 1.00000000) || (g_r.xb - x < 1.00000000)) ||
 		((y - g_r.yt < 1.00000000 || (g_r.yb - y < 1.00000000))))
-		return (2); // Border
-	return (1); // Inside
+		return (2);
+	return (1);
 }
 
 void	ft_draw(float xt, float yt, float xb, float yb)
@@ -62,10 +54,10 @@ void	ft_draw(float xt, float yt, float xb, float yb)
 	int y;
 	
 	y = 0;
-	while (y <= g_display.height)
+	while (y < g_display.height)
 	{
 		x = 0;
-		while (x <= g_display.width)
+		while (x < g_display.width)
 		{
 			if (ft_check_empty((float) x, (float) y) == 2 || (ft_check_empty((float) x, (float) y) != 0 && g_r.op == 'R'))
 				g_display.mapzone[y][x] = g_r.b_char;
