@@ -7,7 +7,7 @@ gcc -Wall -Wextra -Werror -lm our_micro_paint.c -o _our_micro_paint
 g++ -Wall -Wextra -Werror generate_example.cpp -o gen
 echo "$ test"
 counter=1
-max=2
+max=100
 our_res=-1
 bad_res=-1
 while [ $counter -le $max ]
@@ -42,7 +42,6 @@ do
 			printf "\e[1;32m$our_res\e[0m"
 		fi
 	fi
-	((max++))
 	((counter++))
 done
 rm -rf gen micro_paint example_ output coutput

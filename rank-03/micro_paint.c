@@ -19,10 +19,10 @@ typedef struct		s_rect
 	float		width;
 	float		height;
 	char		b_char;
-	int			xt;
-	int			yt;
-	int			xb;
-	int			yb;
+	float			xt;
+	float			yt;
+	float			xb;
+	float			yb;
 }					t_rect;
 
 t_display	g_display;
@@ -37,30 +37,44 @@ void    ft_putstr(char *str)
 	}
 }
 
-void	ft_draw(int xt, int yt, int xb, int yb)
+int		ft_check_validity(float x, float y, float xb, float yb)
+{
+	if (x >= 0 && x < g_display.width)
+		if (y >= 0 && y < g_display.height)
+			return (1);
+	return (0);
+}
+
+int		ft_check_empty(int x, int y, int xb, int yb)
+{
+	if ((x == g_r.xt || x == xb) || (y == g_r.yt || y == yb))
+		return (1);
+	return (0);
+}
+
+void	ft_draw(float xt, float yt, float xb, float yb)
 {
 	while (yt <= yb)
 	{
-		xt = g_r.xt;
+		xt = g_r.x;
 		while (xt <= xb)
 		{
-			if (g_r.op == 'r' && yt >= 0 && xt >= 0 && (((xt == g_r.xt || xt == g_r.xb)) || ((yt == g_r.yt || yt == g_r.yb))))
-				g_display.mapzone[yt][xt] = g_r.b_char;
-			else if (g_r.op == 'R' && yt >= 0 && xt >= 0)
-				g_display.mapzone[yt][xt] = g_r.b_char;
+			if (g_r.op == 'r' && ft_check_validity(xt, yt, xb, yb) && ft_check_empty(xt, yt, xb, yb))
+				g_display.mapzone[(int)yt][(int)xt] = g_r.b_char;
+			else if (g_r.op == 'R' && ft_check_validity(xt, yt, xb, yb))
+				g_display.mapzone[(int)yt][(int)xt] = g_r.b_char;
+			// else
+			// {
+			// 	if (ft_check_validity(xt, yt, xb, yb))
+			// 		printf("NO: %c:%c %f:%f %f:%f %f %f check_validity: %d check_empty: %d\n", g_r.op, g_r.b_char, g_r.xt, xt, g_r.yt, yt, g_r.xb, g_r.yb, ft_check_validity(xt, yt, xb, yb), ft_check_empty(xt, yt, xb, yb));
+			// }
+			
 			xt++;
 		}
 		yt++;
 	}
 }
 
-int		ft_check_validity(int x, int y)
-{
-	if (x >= 0 && x <= g_display.width)
-		if (y >= 0 && y <= g_display.height)
-			return (1);
-	return (0);
-}
 int     ft_readfile(char const *filename)
 {
 	FILE *fd;
@@ -76,27 +90,29 @@ int     ft_readfile(char const *filename)
 		memset(g_display.mapzone[i], g_display.b_char, g_display.width);
 		i++;
 	}
-	while (fscanf(fd, "%c %f %f %f %f %c\n", &g_r.op, &g_r.x, &g_r.y, &g_r.width, &g_r.height, &g_r.b_char) == 6)
+	while ((i = fscanf(fd, "%c %f %f %f %f %c \n", &g_r.op, &g_r.x, &g_r.y, &g_r.width, &g_r.height, &g_r.b_char)) == 6)
 	{
-		g_r.xt = (int) (g_r.x);
-		g_r.yt = (int) (g_r.y);
-		g_r.xb = g_r.xt + (int) (g_r.width);
-		g_r.yb = g_r.yt + (int) (g_r.height);
+		g_r.x += 0.05;
+		g_r.y += 0.05;
+		g_r.xb = g_r.x + g_r.width;
+		g_r.yb = g_r.y + g_r.height;
 		if (((int) (g_r.x * 10) % 10) > 0)
-			g_r.xt++;
-		if (((int) (g_r.y * 10) % 10) > 0)
-			g_r.yt++;
-		if (g_r.xb >= g_display.width)
-			g_r.xb = g_display.width;
-		if (g_r.yb >= g_display.height)
-			g_r.yb = g_display.height;
-		if (g_r.xt < 0)
-			g_r.xt = 0;
-		if (g_r.yt < 0)
-			g_r.yt = 0;
-		ft_draw(g_r.xt, g_r.yt, g_r.xb, g_r.yb);
+			g_r.x++;
+		if (((int) (g_r.y * 10) % 10 ) > 0)
+			g_r.y++;
+		if (((int) (g_r.width * 10) % 10) > 7)
+			g_r.xb++;
+		if (((int) (g_r.height * 10) % 10) > 7)
+			g_r.yb++;
+		g_r.xt = (int) g_r.x;
+		g_r.yt = (int) g_r.y;
+		// printf("%c %f %f %f %f\n", g_r.op, g_r.x, g_r.y, g_r.width, g_r.height);
+		// printf("%c %f %f %f %f\n", g_r.op, g_r.xt, g_r.yt, g_r.xb, g_r.yb);
+		ft_draw(g_r.xt, g_r.yt, g_r.xb , g_r.yb);
 	}
 	fclose(fd);
+	if (i != -1)
+		return (1);
 	return (0);
 }
 
