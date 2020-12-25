@@ -69,7 +69,10 @@ void execute_one(rectangle *rect, drawing *drawing, int x, int y)
 
 	is_in = is_in_rectangle((float)x, (float)y, rect);
 	if ((is_in == 2) || ((is_in == 1 && (rect->type == 'R'))))
+	{
+		printf("x:%f y:%f , %d : %d\n", rect->x, rect->y, x, y);
 		drawing->matrice[x + y * drawing->width] = rect->color;
+	}
 	return;
 }
 
@@ -111,6 +114,7 @@ int execute(FILE *file)
 		scan_ret = fscanf(file,"%c %f %f %f %f %c\n", &rect.type, &rect.x, &rect.y, &rect.width, &rect.height, &rect.color);
 		while (scan_ret == 6)
 		{
+			printf("file : x:%f y:%f , %f : %f\n", rect.x, rect.y, rect.width, rect.height);
 			if (apply_op(&rect, &drawing))
 				return (1);
 			scan_ret = fscanf(file,"%c %f %f %f %f %c\n", &rect.type, &rect.x, &rect.y, &rect.width, &rect.height, &rect.color);

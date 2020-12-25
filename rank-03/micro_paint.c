@@ -46,41 +46,33 @@ int		ft_check_validity(float x, float y, float xb, float yb)
 	return (0);
 }
 
-int		ft_check_empty(float x, float y, float xb, float yb)
+int		ft_check_empty(float x, float y)
 {
-	if ((x == g_r.xt || x == xb) || (y == g_r.yt || y == yb))
-		return (1);
-	return (0);
+	if ((((x < g_r.xt) || (g_r.xb < x)) || (y < g_r.yt)) || (g_r.yb < y))
+		return (0);
+	if (((x - g_r.xt < 1.00000000) || (g_r.xb - x < 1.00000000)) ||
+		((y - g_r.yt < 1.00000000 || (g_r.yb - y < 1.00000000))))
+		return (2); // Border
+	return (1); // Inside
 }
 
 void	ft_draw(float xt, float yt, float xb, float yb)
 {
-	int i;
-	int j;
-
-	i = 0;
-	j = 0;
-	while (yt <= yb)
+	int x;
+	int y;
+	
+	y = 0;
+	while (y <= g_display.height)
 	{
-		xt = g_r.x;
-		while (xt <= xb)
+		x = 0;
+		while (x <= g_display.width)
 		{
-			if (g_r.op == 'r' && ft_check_validity(round(xt), round(yt), xb, yb) && ft_check_empty(round(xt), round(yt), round(xb), round(yb)))
-				g_display.mapzone[(int)yt][(int)xt] = g_r.b_char;
-			else if (g_r.op == 'R' && ft_check_validity(round(xt), round(yt), xb, yb))
-				g_display.mapzone[(int)yt][(int)xt] = g_r.b_char;
-			else
-			{
-				if (ft_check_validity(xt, yt, xb, yb))
-					printf("NO: %c:%c %f:%f %f:%f %f:%f %f:%f check_validity: %d check_empty: %d\n", g_r.op, g_r.b_char, g_r.xt, round(xt), g_r.yt, round(yt), g_r.xb, xb, g_r.yb, yb, ft_check_validity(xt, yt, xb, yb), ft_check_empty(round(xt), round(yt), xb, yb));
-			}
-			
-			xt++;
+			if (ft_check_empty((float) x, (float) y) == 2 || (ft_check_empty((float) x, (float) y) != 0 && g_r.op == 'R'))
+				g_display.mapzone[y][x] = g_r.b_char;
+			x++;
 		}
-		i++;
-		yt++;
+		y++;
 	}
-	// printf("%c : %d %d\n", g_r.b_char, i, j);
 }
 
 int     ft_readfile(char const *filename)
@@ -102,16 +94,8 @@ int     ft_readfile(char const *filename)
 	{
 		g_r.xb = g_r.x + g_r.width;
 		g_r.yb = g_r.y + g_r.height;
-		g_r.xt = round(g_r.x);
-		g_r.yt = round(g_r.y);
-		// if ((int) (g_r.x * 10) % 10 > 0 || (int) (g_r.y * 10) % 10 >= 0)
-		// {
-		// 	g_r.xb = round(g_r.xb);
-		// 	g_r.yb = round(g_r.yb);
-		// }
-		printf("%f : floor: %f\n", g_r.x, round(g_r.x));
-		printf("%c %f %f %f %f\n", g_r.op, g_r.x, g_r.y, g_r.width, g_r.height);
-		printf("%c %f %f %f %f\n", g_r.op, g_r.xt, g_r.cat yt, g_r.xb, g_r.yb);
+		g_r.xt = g_r.x;
+		g_r.yt = g_r.y;
 		ft_draw(g_r.xt, g_r.yt, g_r.xb , g_r.yb);
 	}
 	fclose(fd);
